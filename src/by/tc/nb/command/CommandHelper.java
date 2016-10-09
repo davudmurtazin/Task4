@@ -18,6 +18,8 @@ public class CommandHelper {
 		commands.put("SHOW_NOTES", new ShowNotes());
 		commands.put("WRITE_NOTES_TO_FILE", new WriteNotesToFile());
 		commands.put("CLEAT_NOTEBOOK", new ClearNoteBook());
+		commands.put("SERIALIZE_NOTEBOOK", new SerializeNoteBook());
+		commands.put("DESERIALIZE_NOTEBOOK", new DeserializeNoteBook());
 	}
 
 	public Command getCommand(String commandName) {

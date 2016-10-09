@@ -12,21 +12,6 @@ import java.util.ArrayList;
 
 public class NoteBookServiceImpl implements NoteBookService {
 
-//	@Override
-//	public void addNote(Note note, String date) throws ServiceException {
-//		// parameters validation
-//		if (note == null || "".equals(note)){
-//			throw new ServiceException("Wrong parameter!");
-//		}
-//
-//
-//		Note newNote = new Note();
-//
-//		NoteBook noteBook = NoteBookProvider.getInstance().getNoteBook();
-//		// noteBook.add(newNote);
-//
-//	}
-
 	@Override
 	public void addNote(String note, String date) throws ServiceException {
 		if (note == null || date.isEmpty() && date==null || date.isEmpty()){
@@ -103,15 +88,19 @@ public class NoteBookServiceImpl implements NoteBookService {
 	@Override
 	public void writeNotesToFile(String filePath) throws ServiceException {
 		NoteBook noteBook = NoteBookProvider.getInstance().getNoteBook();
-		try{
-			PrintStream printStream = new PrintStream( new BufferedOutputStream(new FileOutputStream(filePath, true)));
-			for (Note note : noteBook.getNotes()){
-				printStream.println(note.toString());
+		if(filePath.isEmpty()){
+			throw new ServiceException("Wrong parameter!");
+		}else {
+			try {
+				PrintStream printStream = new PrintStream(new BufferedOutputStream(new FileOutputStream(filePath, true)));
+				for (Note note : noteBook.getNotes()) {
+					printStream.println(note.toString());
+				}
+				System.out.println("Access writing to file!");
+				printStream.close();
+			} catch (FileNotFoundException e) {
+				throw new ServiceException("Can not write to file!");
 			}
-			System.out.println("Access writing to file!");
-			printStream.close();
-		} catch (FileNotFoundException e) {
-			throw new ServiceException("Can not write to file!");
 		}
 	}
 
@@ -133,5 +122,53 @@ public class NoteBookServiceImpl implements NoteBookService {
 				System.out.println(note);
 			}
 		}
+	}
+
+	@Override
+	public void serializeNotebook(String filePath) throws ServiceException{
+		NoteBook noteBook = NoteBookProvider.getInstance().getNoteBook();
+		if(filePath.isEmpty()){
+			throw new ServiceException("Wrong parameter!");
+		}else {
+			try {
+				FileOutputStream fos = new FileOutputStream(filePath);
+				ObjectOutputStream out = new ObjectOutputStream(fos);
+				out.writeObject(noteBook);
+
+				System.out.println("Access writing to file!");
+				out.close();
+			} catch (FileNotFoundException e) {
+				throw new ServiceException("Can not write to file!");
+			} catch (IOException e) {
+				throw new ServiceException("Can not write to file!");
+			}
+		}
+	}
+
+	@Override
+	public ArrayList<Note> deserializeNotebook(String filePath) throws ServiceException, IOException {
+		NoteBook noteBook = NoteBookProvider.getInstance().getNoteBook();
+		if(filePath.isEmpty()){
+			throw new ServiceException("Wrong parameter!");
+		}
+		else {
+			File file = new File(filePath);
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String line;
+			int dashPosition;
+			int contentBegins;
+			while ((line = br.readLine()) != null) {
+				if (Validator.isNote(line)) {
+					dashPosition = line.indexOf('-');
+					contentBegins = dashPosition + 1;
+					Note note = new Note(line.substring(contentBegins),line.substring(1, dashPosition));
+					noteBook.getNotes().add(note);
+				} else {
+					System.out.println("Line in file is not valid");
+				}
+			}
+			br.close();
+		}
+		return noteBook.getNotes();
 	}
 }

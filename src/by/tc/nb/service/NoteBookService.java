@@ -3,6 +3,7 @@ package by.tc.nb.service;
 import by.tc.nb.bean.entity.Note;
 import by.tc.nb.service.exception.ServiceException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -21,4 +22,8 @@ public interface NoteBookService {
 	void clearNoteBook() throws ServiceException;
 
 	void showAllNotes();
+
+	void serializeNotebook(String filePath) throws ServiceException;
+
+	ArrayList<Note> deserializeNotebook(String filePath) throws ServiceException, IOException;;
 }

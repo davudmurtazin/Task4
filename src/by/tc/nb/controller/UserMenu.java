@@ -26,7 +26,9 @@ public class UserMenu {
                 "5. Show all notes \n" +
                 "6. Read notes from file \n" +
                 "7. Write note to file \n"  +
-                "8. Exit");
+                "8. Serialize notebook\n"  +
+                "9. Deserialize notebook \n"  +
+                "0. Exit");
     }
 
     public void begin() throws ServiceException {
@@ -41,10 +43,14 @@ public class UserMenu {
                 case "5": showAllNotes(); break;
                 case "6": readNotesFromFile(); break;
                 case "7": writeNotesToFile(); break;
+                case "8": serializeNotebook(); break;
+                case "9": deserializeNotebook(); break;
                 default: System.out.println("Incorrect command! Enter again: "); break;
             }
         }
     }
+
+
 
     private void addNote() throws ServiceException {
         System.out.println("Enter note to add: ");
@@ -152,6 +158,30 @@ public class UserMenu {
         WriteNotesToFileRequest request = new WriteNotesToFileRequest();
         request.setCommandName("WRITE_NOTES_TO_FILE");
         request.setFilePath(filePath);
+        Response response = controller.doRequest(request);
+        if(!response.isErrorStatus()){
+            System.out.println(response.getErrorMessage());
+        }
+    }
+
+    private void serializeNotebook() throws ServiceException {
+        String filePath = "src/notebookSerialize.txt";
+        SerializeNoteBookRequest request = new SerializeNoteBookRequest();
+        request.setCommandName("SERIALIZE_NOTEBOOK");
+        request.setFilePath(filePath);
+        Response response = controller.doRequest(request);
+        if(!response.isErrorStatus()){
+            System.out.println(response.getErrorMessage());
+        }
+    }
+
+    private void deserializeNotebook() throws ServiceException {
+        String filePath = "src/notebookSerialize.txt";
+
+        DeserializeNoteBookRequest request = new DeserializeNoteBookRequest();
+        request.setCommandName("DESERIALIZE_NOTEBOOK");
+        request.setFilePath(filePath);
+
         Response response = controller.doRequest(request);
         if(!response.isErrorStatus()){
             System.out.println(response.getErrorMessage());
