@@ -127,8 +127,8 @@ public class NoteBookServiceImpl implements NoteBookService {
 	@Override
 	public void serializeNotebook(String filePath) throws ServiceException{
 		NoteBook noteBook = NoteBookProvider.getInstance().getNoteBook();
-		if(filePath.isEmpty()){
-			throw new ServiceException("Wrong parameter!");
+		if(filePath.isEmpty() && noteBook.getNotes().isEmpty()){
+			throw new ServiceException("Wrong parameter or notebook is empty!");
 		}else {
 			try {
 				FileOutputStream fos = new FileOutputStream(filePath);
